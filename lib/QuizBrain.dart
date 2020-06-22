@@ -24,13 +24,18 @@ class QuizBrain {
   void addWrong() => score.add(false);
   void checkAnswer(bool answer) {
     if (isFinished) {
-      print("haha");
       return;
     }
     questions[questionNum].isCorrect(answer: answer)
         ? addCorrect()
         : addWrong();
     nextQuestion();
+  }
+
+  void reset() {
+    score = [];
+    questionNum = 0;
+    isFinished = false;
   }
 }
 

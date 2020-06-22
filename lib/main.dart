@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quizzler/QuizBrain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 void main() => runApp(Quizzler());
 
@@ -64,7 +65,10 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 quizBrain.checkAnswer(true);
-                setState(() {});
+
+                setState(() {
+                  showScoreIfDone(context);
+                });
               },
             ),
           ),
@@ -83,7 +87,10 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 quizBrain.checkAnswer(false);
-                setState(() {});
+
+                setState(() {
+                  showScoreIfDone(context);
+                });
               },
             ),
           ),
@@ -93,6 +100,33 @@ class _QuizPageState extends State<QuizPage> {
         )
       ],
     );
+  }
+
+  void showScoreIfDone(BuildContext context) {
+    int finalSore = quizBrain.score.where((e) => e == true).toList().length;
+    if (quizBrain.isFinished) {
+      Alert(
+        context: context,
+        type: AlertType.success,
+        title: "game over",
+        desc: "your score is $finalSore",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "reset",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                quizBrain.reset();
+              });
+            },
+            width: 120,
+          )
+        ],
+      ).show();
+    }
   }
 
   List<Widget> genScore() {
