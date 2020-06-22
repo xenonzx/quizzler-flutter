@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler/QuizBrain.dart';
 
 void main() => runApp(Quizzler());
 
@@ -25,13 +26,7 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  List<Question> questions = [
-    Question('You can lead a cow down stairs but not up stairs.', false),
-    Question('Approximately one quarter of human bones are in the feet.', true),
-    Question('A slug\'s blood is green.', true),
-  ];
-  List<bool> score = [true, false];
-  int questionNum = 0;
+  QuizBrain quizBrain = QuizBrain();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,7 +39,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                questions[questionNum].questionText,
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -68,10 +63,8 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                checkAnswer(questions[questionNum], true);
-                setState(() {
-                  questionNum++;
-                });
+                quizBrain.checkAnswer(true);
+                setState(() {});
               },
             ),
           ),
@@ -89,10 +82,8 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                checkAnswer(questions[questionNum], false);
-                setState(() {
-                  questionNum++;
-                });
+                quizBrain.checkAnswer(false);
+                setState(() {});
               },
             ),
           ),
@@ -100,22 +91,13 @@ class _QuizPageState extends State<QuizPage> {
         Row(
           children: genScore(),
         )
-        //TODO: Add a Row here as your score keeper
       ],
     );
   }
 
-  void checkAnswer(Question q, bool answer) {
-    q.isCorrect(answer: answer) ? addCorrect() : addWrong();
-  }
-
-  void addCorrect() => score.add(true);
-
-  void addWrong() => score.add(false);
-
   List<Widget> genScore() {
     List<Widget> widgets = [];
-    for (bool mark in score) {
+    for (bool mark in quizBrain.score) {
       if (mark) {
         widgets.add(Icon(
           Icons.check,
@@ -132,13 +114,6 @@ class _QuizPageState extends State<QuizPage> {
   }
 }
 
-class Question {
-  String questionText;
-  bool correctAnswer;
-  Question(this.questionText, this.correctAnswer);
-
-  bool isCorrect({bool answer}) => correctAnswer == answer;
-}
 /*
 question1: 'You can lead a cow down stairs but not up stairs.', false,
 question2: 'Approximately one quarter of human bones are in the feet.', true,
