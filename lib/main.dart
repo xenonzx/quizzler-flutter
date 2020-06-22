@@ -25,6 +25,13 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  List<Question> questions = [
+    Question('You can lead a cow down stairs but not up stairs.', false),
+    Question('Approximately one quarter of human bones are in the feet.', true),
+    Question('A slug\'s blood is green.', true),
+  ];
+  List<bool> score = [true, false];
+  int questionNum = 0;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +44,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                questions[questionNum].questionText,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -61,7 +68,10 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked true.
+                checkAnswer(questions[questionNum], true);
+                setState(() {
+                  questionNum++;
+                });
               },
             ),
           ),
@@ -79,17 +89,56 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked false.
+                checkAnswer(questions[questionNum], false);
+                setState(() {
+                  questionNum++;
+                });
               },
             ),
           ),
         ),
+        Row(
+          children: genScore(),
+        )
         //TODO: Add a Row here as your score keeper
       ],
     );
   }
+
+  void checkAnswer(Question q, bool answer) {
+    q.isCorrect(answer: answer) ? addCorrect() : addWrong();
+  }
+
+  void addCorrect() => score.add(true);
+
+  void addWrong() => score.add(false);
+
+  List<Widget> genScore() {
+    List<Widget> widgets = [];
+    for (bool mark in score) {
+      if (mark) {
+        widgets.add(Icon(
+          Icons.check,
+          color: Colors.green,
+        ));
+      } else {
+        widgets.add(Icon(
+          Icons.close,
+          color: Colors.red,
+        ));
+      }
+    }
+    return widgets;
+  }
 }
 
+class Question {
+  String questionText;
+  bool correctAnswer;
+  Question(this.questionText, this.correctAnswer);
+
+  bool isCorrect({bool answer}) => correctAnswer == answer;
+}
 /*
 question1: 'You can lead a cow down stairs but not up stairs.', false,
 question2: 'Approximately one quarter of human bones are in the feet.', true,
